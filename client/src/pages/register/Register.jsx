@@ -1,80 +1,67 @@
 import axios from "axios";
-import { useRef } from "react";
-import "./register.css";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
+import apiEndpoints from "../../apiEndpoints";
+import TextField from "@material-ui/core/TextField";
+import "./register.css";
 
 export default function Register() {
-  const username = useRef();
-  const email = useRef();
-  const password = useRef();
-  const passwordAgain = useRef();
-  const history = useHistory();
+	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [passwordAgain, setPasswordAgain] = useState("");
+	const [error, setError] = useState("");
 
-  const handleClick = async (e) => {
-    e.preventDefault();
-    if (passwordAgain.current.value !== password.current.value) {
-      passwordAgain.current.setCustomValidity("Passwords don't match!");
-    } else {
-      const user = {
-        username: username.current.value,
-        email: email.current.value,
-        password: password.current.value,
-      };
-      try {
-        await axios.post("/auth/register", user);
-        history.push("/login");
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
+	const history = useHistory();
 
-  return (
-    <div className="login">
-      <div className="loginWrapper">
-        <div className="loginLeft">
-          <h3 className="loginLogo">Lamasocial</h3>
-          <span className="loginDesc">
-            Connect with friends and the world around you on Lamasocial.
-          </span>
-        </div>
-        <div className="loginRight">
-          <form className="loginBox" onSubmit={handleClick}>
-            <input
-              placeholder="Username"
-              required
-              ref={username}
-              className="loginInput"
-            />
-            <input
-              placeholder="Email"
-              required
-              ref={email}
-              className="loginInput"
-              type="email"
-            />
-            <input
-              placeholder="Password"
-              required
-              ref={password}
-              className="loginInput"
-              type="password"
-              minLength="6"
-            />
-            <input
-              placeholder="Password Again"
-              required
-              ref={passwordAgain}
-              className="loginInput"
-              type="password"
-            />
-            <button className="loginButton" type="submit">
-              Sign Up
-            </button>
-            <button className="loginRegisterButton">Log into Account</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+	useEffect(() => {
+		if (passwordAgain !== password) {
+			setError("Passwords do not match");
+		} else setError("");
+	}, [password, passwordAgain]);
+
+	const handleClick = async (e) => {
+		e.preventDefault();
+		try {
+			const { status } = await axios.post(apiEndpoints.REGISTER, { username, email, password });
+			if (status === 200) history.push("/login");
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	return (
+		<div className="login">
+			<div className="loginWrapper">
+				<div className="loginLeft">
+					<h3 className="loginLogo">Social App</h3>
+					<span className="loginDesc">Connect with friends and the world around you on Social App.</span>
+				</div>
+				<div className="loginRight">
+					<form className="loginBox" onSubmit={handleClick}>
+						<TextField variant="outlined" name="username" label="Username" onChange={(e) => setUsername(e.target.value)} required />
+						<TextField variant="outlined" name="email" label="Email" type="email" onChange={(e) => setEmail(e.target.value)} required />
+						<TextField variant="outlined" name="password" onChange={(e) => setPassword(e.target.value)} label="Password" type="password" required />
+						<TextField
+							variant="outlined"
+							name="passwordAgain"
+							onChange={(e) => setPasswordAgain(e.target.value)}
+							error={!!error}
+							helperText={error}
+							label="Confirm Password"
+							type="password"
+							required
+						/>
+
+						<button className="loginButton" type="submit">
+							Sign Up
+						</button>
+						<button type="button" className="loginRegisterButton" onClick={() => history.push("/login")}>
+							Log into Account
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	);
 }
