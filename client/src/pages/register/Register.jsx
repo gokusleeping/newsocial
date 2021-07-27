@@ -39,9 +39,9 @@ export default function Register() {
 				</div>
 				<div className="loginRight">
 					<form className="loginBox" onSubmit={handleClick}>
-						<TextField variant="outlined" name="username" label="Username" onChange={(e) => setUsername(e.target.value)} required />
-						<TextField variant="outlined" name="email" label="Email" type="email" onChange={(e) => setEmail(e.target.value)} required />
-						<TextField variant="outlined" name="password" onChange={(e) => setPassword(e.target.value)} label="Password" type="password" required />
+						<TextField variant="outlined" label="Username" onChange={(e) => setUsername(e.target.value)} required />
+						<TextField variant="outlined" label="Email" type="email" onChange={(e) => setEmail(e.target.value)} required />
+						<TextField variant="outlined" onChange={(e) => setPassword(e.target.value)} label="Password" type="password" required />
 						<TextField
 							variant="outlined"
 							name="passwordAgain"
