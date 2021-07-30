@@ -1,6 +1,7 @@
 {
 	"scripts": {
-		"dev": "concurrently \"cd api && yarn start\" \"cd client && yarn start\""
+		"dev": "concurrently \"cd api && yarn start\" \"cd client && yarn start\"",
+		"start": "yarn dev"
 	},
 	"devDependencies": {
 		"concurrently": "^6.2.0"

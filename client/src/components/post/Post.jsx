@@ -85,7 +85,7 @@ export default function Post({ post }) {
 					<ShareIcon />
 				</IconButton>
 				<IconButton aria-label="add to favorites">
-					<FavoriteIcon onClick={likeHandler} />
+					<FavoriteIcon onClick={likeHandler} style={isLiked ? { color: "indianred" } : {}} />
 				</IconButton>
 				<span className="postLikeCounter">{like} people like it</span>
 				<IconButton onClick={() => setExpanded((e) => !e)} aria-expanded={expanded} aria-label="show more" style={{ marginLeft: "auto" }}>
