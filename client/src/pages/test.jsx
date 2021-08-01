@@ -24,6 +24,8 @@ import { Grid, Menu, MenuItem, Paper } from "@material-ui/core";
 
 import { RssFeed, Chat, Group, Bookmark } from "@material-ui/icons";
 
+import Feed from "../components/feed/Feed";
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -242,10 +244,10 @@ export default function ClippedDrawer() {
 				<Toolbar />
 
 				<Grid container spacing={2}>
-					<Grid item xs={12} md={8}>
-						<Paper className={classes.paper}>Feed</Paper>
+					<Grid item xs={7} md={8}>
+						<Feed />
 					</Grid>
-					<Grid item xs={12} md={4}>
+					<Grid item xs={5} md={4}>
 						<Paper className={classes.paper}>Online Users &amp; Chats</Paper>
 					</Grid>
 				</Grid>
