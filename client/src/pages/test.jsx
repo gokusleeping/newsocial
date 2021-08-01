@@ -1,4 +1,8 @@
-import React, { Fragment } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { Link } from "react-router-dom";
+import axios from "axios";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -20,7 +24,7 @@ import Badge from "@material-ui/core/Badge";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import { deepOrange, deepPurple } from "@material-ui/core/colors";
-import { Grid, Menu, MenuItem, Paper } from "@material-ui/core";
+import { CardMedia, Grid, Menu, MenuItem, Paper } from "@material-ui/core";
 
 import { RssFeed, Chat, Group, Bookmark } from "@material-ui/icons";
 
@@ -33,7 +37,8 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex"
 	},
 	appBar: {
-		zIndex: theme.zIndex.drawer + 1
+		zIndex: theme.zIndex.drawer + 1,
+		background: theme.palette.grey[700]
 	},
 	drawer: {
 		width: drawerWidth,
@@ -106,8 +111,21 @@ const useStyles = makeStyles((theme) => ({
 
 const menuId = "primary-search-account-menu";
 
-export default function ClippedDrawer() {
+export default function ClippedDrawer({ history }) {
 	const classes = useStyles();
+
+	const [users, setUsers] = useState([]);
+
+	const { user } = useContext(AuthContext);
+
+	useEffect(
+		() =>
+			(async () => {
+				const res = await axios.get("/users/all");
+				setUsers(res.data);
+			})(),
+		[]
+	);
 
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [open, setOpen] = React.useState(false);
@@ -130,8 +148,11 @@ export default function ClippedDrawer() {
 			onClose={handleProfileMenuClose}
 			open={open}
 		>
-			<MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
-			<MenuItem onClick={handleProfileMenuClose}>My account</MenuItem>
+			<Link to={`/profile/${user.username}`}>
+				<MenuItem>Profile</MenuItem>
+			</Link>
+			{/* <MenuItem onClick={handleProfileMenuClose}>Settings</MenuItem> */}
+			<MenuItem onClick={handleProfileMenuClose}>Logout</MenuItem>
 		</Menu>
 	);
 
@@ -141,9 +162,11 @@ export default function ClippedDrawer() {
 			<CssBaseline />
 			<AppBar position="fixed" className={classes.appBar}>
 				<Toolbar>
-					<Typography variant="h6" noWrap>
-						Social App
-					</Typography>
+					<Link to="/">
+						<Typography variant="h6" noWrap>
+							Social App
+						</Typography>
+					</Link>
 					<div className={classes.grow} />
 					<div className={classes.search}>
 						<div className={classes.searchIcon}>
@@ -214,27 +237,16 @@ export default function ClippedDrawer() {
 						<ListItem>
 							<h2 style={{ fontWeight: 700, textAlign: "center" }}>Users</h2>
 						</ListItem>
-						{new Array(5).fill().map((_, index) => (
-							<Fragment key={index}>
-								<ListItem button key="4">
+
+						{users.map((user, index) => (
+							<Link to={`/profile/${user.username}`} color="inherit" key={index + 1}>
+								<ListItem button>
 									<ListItemIcon>
-										<Avatar className={classes.orange}>र</Avatar>
+										<Avatar src={user.profilePicture} />
 									</ListItemIcon>
-									<ListItemText primary="Ranvir" />
+									<ListItemText primary={user.name} />
 								</ListItem>
-								<ListItem button key="5">
-									<ListItemIcon>
-										<Avatar className={classes.orange}>ह</Avatar>
-									</ListItemIcon>
-									<ListItemText primary="Himanshu" />
-								</ListItem>
-								<ListItem button key="6">
-									<ListItemIcon>
-										<Avatar className={classes.orange}>च</Avatar>
-									</ListItemIcon>
-									<ListItemText primary="Chetan" />
-								</ListItem>
-							</Fragment>
+							</Link>
 						))}
 					</List>
 				</div>
@@ -248,7 +260,31 @@ export default function ClippedDrawer() {
 						<Feed />
 					</Grid>
 					<Grid item xs={5} md={4}>
-						<Paper className={classes.paper}>Online Users &amp; Chats</Paper>
+						<img style={{ height: "auto", maxWidth: "100%", borderRadius: 6, marginBottom: 12 }} src="/assets/ad.png" />
+
+						<Paper>
+							<List>
+								<ListItem>
+									<h2 style={{ fontWeight: 500, textAlign: "center" }}>Online Users</h2>
+								</ListItem>
+								<Divider />
+								{users.map((user, index) => (
+									<ListItem button key={index + 1}>
+										<Link to={`/profile/${user.username}`} color="inherit" style={{ display: "flex", flexGrow: 1, alignItems: "center" }}>
+											<ListItemIcon>
+												<Avatar src={user.profilePicture} />
+											</ListItemIcon>
+											<ListItemText primary={user.name} />
+										</Link>
+										<Link to={`/chats/${user.username}`}>
+											<ListItemIcon>
+												<Chat style={{ marginLeft: "auto" }} />
+											</ListItemIcon>
+										</Link>
+									</ListItem>
+								))}
+							</List>
+						</Paper>
 					</Grid>
 				</Grid>
 			</main>

@@ -6,7 +6,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { Button, CardMedia, Divider, Grid } from "@material-ui/core";
 
-import { PermMedia, Label, Room, EmojiEmotions, Cancel } from "@material-ui/icons";
+import { Photo, Cancel } from "@material-ui/icons";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -59,7 +59,7 @@ export default function Feed({ username }) {
 	return (
 		<div className="feed">
 			<Grid container spacing={3}>
-				<Grid item>
+				<Grid item style={{ width: "100%" }}>
 					<Card>
 						<CardHeader
 							title={
@@ -69,36 +69,40 @@ export default function Feed({ username }) {
 							}
 						/>
 						<CardContent style={{ paddingTop: 0 }}>
-							<Typography color="textSecondary" component="p">
-								This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.
-							</Typography>
+							<textarea
+								style={{ height: "8rem", width: "100%", maxWidth: "100%", minWidth: "100%", border: "1px dashed #aaa", padding: 4, borderRadius: 8 }}
+								placeholder={"Hey " + user.username + ". Got something to share?"}
+								ref={desc}
+							/>
 						</CardContent>
 
 						{file && (
-							<>
-								<Divider />
+							<div className="shareImgContainer">
 								<CardMedia style={{ height: "250px", backgroundSize: "contain" }} image={URL.createObjectURL(file)} title="Paella dish" />
-							</>
+								<Cancel className="shareCancelImg" onClick={() => setFile(null)} />
+							</div>
 						)}
 
 						<Divider />
 
 						<CardActions disableSpacing>
-							<form onSubmit={submitHandler}>
-								<label htmlFor="file">
-									<PermMedia htmlColor="tomato" className="shareIcon" />
-									<span className="shareOptionText">Upload Image</span>
+							<form onSubmit={submitHandler} style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+								<label htmlFor="file" style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+									<Photo htmlColor="tomato" />
+									<span style={{ paddingLeft: 8 }}>Upload Image</span>
+									<input style={{ display: "none" }} type="file" id="file" accept=".png,.jpeg,.jpg" onChange={(e) => setFile(e.target.files[0])} />
 								</label>
-								<input style={{ display: "none" }} type="file" id="file" accept=".png,.jpeg,.jpg" onChange={(e) => setFile(e.target.files[0])} />
+								<Button type="submit" style={{ background: "#ff6347", color: "white", marginLeft: "auto", padding: "0.25rem 2.5rem" }}>
+									Share
+								</Button>
 							</form>
-							<Button style={{ background: "#ff5722", color: "white", marginLeft: "auto" }}>Share</Button>
 						</CardActions>
 					</Card>
 				</Grid>
 
 				{posts.map((p) => (
-					<Grid item>
-						<Post key={p._id} post={p} />
+					<Grid item style={{ width: "100%" }}>
+						<Post key={p._id} post={p} setPosts={setPosts} />
 					</Grid>
 				))}
 			</Grid>

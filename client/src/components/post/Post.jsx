@@ -6,7 +6,7 @@ import { format } from "timeago.js";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
-import { Menu, MenuItem } from "@material-ui/core";
+import { Menu, MenuItem, Tooltip, Divider } from "@material-ui/core";
 
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -20,10 +20,12 @@ import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import DeleteIcon from "@material-ui/icons/Delete";
+// import ChatIcon from "@material-ui/icons/Chat";
+import CommentIcon from "@material-ui/icons/Comment";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 
-export default function Post({ post }) {
+export default function Post({ post, setPosts }) {
 	const [like, setLike] = useState(post.likes.length);
 	const [isLiked, setIsLiked] = useState(false);
 	const [user, setUser] = useState({});
@@ -53,6 +55,15 @@ export default function Post({ post }) {
 		setIsLiked(!isLiked);
 	};
 
+	const deletePost = () => {
+		try {
+			axios.delete(`/posts/${post._id}`, { userId: currentUser._id });
+		} catch (e) {
+			console.error(e);
+		}
+		setPosts((posts) => posts.filter((x) => x._id !== post._id));
+	};
+
 	return (
 		<Card>
 			<CardHeader
@@ -65,9 +76,14 @@ export default function Post({ post }) {
 					<IconButton aria-label="settings">
 						<MoreVert aria-controls="simple-menu" aria-haspopup="true" onClick={(e) => setAnchorEl(e.currentTarget)} />
 						<Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-							<MenuItem onClick={() => setAnchorEl(null)}>Profile</MenuItem>
-							<MenuItem onClick={() => setAnchorEl(null)}>My account</MenuItem>
-							<MenuItem onClick={() => setAnchorEl(null)}>Logout</MenuItem>
+							<MenuItem onClick={() => setAnchorEl(null)}>
+								<ShareIcon fontSize="small" style={{ marginRight: 10 }} />
+								<Typography variant="inherit">Share</Typography>
+							</MenuItem>
+							<MenuItem onClick={deletePost}>
+								<DeleteIcon fontSize="small" style={{ marginRight: 10 }} />
+								<Typography variant="inherit">Delete</Typography>
+							</MenuItem>
 						</Menu>
 					</IconButton>
 				}
@@ -77,19 +93,21 @@ export default function Post({ post }) {
 			{post.img && <img className="postImg" src={PF + post.img} alt="" />}
 			<CardContent>
 				<Typography variant="body2" color="textSecondary" component="p">
-					This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.
+					{post.desc}
 				</Typography>
 			</CardContent>
+			<Divider />
 			<CardActions disableSpacing>
-				<IconButton aria-label="share">
-					<ShareIcon />
-				</IconButton>
 				<IconButton aria-label="add to favorites">
-					<FavoriteIcon onClick={likeHandler} style={isLiked ? { color: "indianred" } : {}} />
+					<Tooltip title="Like">
+						<FavoriteIcon onClick={likeHandler} style={isLiked ? { color: "indianred" } : {}} />
+					</Tooltip>
 				</IconButton>
 				<span className="postLikeCounter">{like} people like it</span>
 				<IconButton onClick={() => setExpanded((e) => !e)} aria-expanded={expanded} aria-label="show more" style={{ marginLeft: "auto" }}>
-					<ExpandMoreIcon />
+					<Tooltip title="Comments">
+						<CommentIcon />
+					</Tooltip>
 				</IconButton>
 			</CardActions>
 			<Collapse in={expanded} timeout="auto" unmountOnExit>

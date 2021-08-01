@@ -9,6 +9,10 @@ const UserSchema = new mongoose.Schema(
 			max: 20,
 			unique: true
 		},
+		name: {
+			type: String,
+			min: 3
+		},
 		email: {
 			type: String,
 			required: true,
@@ -24,10 +28,10 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			default: ""
 		},
-		coverPicture: {
-			type: String,
-			default: ""
-		},
+		// coverPicture: {
+		// 	type: String,
+		// 	default: ""
+		// },
 		followers: {
 			type: Array,
 			default: []
@@ -36,10 +40,10 @@ const UserSchema = new mongoose.Schema(
 			type: Array,
 			default: []
 		},
-		isAdmin: {
-			type: Boolean,
-			default: false
-		},
+		// isAdmin: {
+		// 	type: Boolean,
+		// 	default: false
+		// },
 		desc: {
 			type: String,
 			max: 50
@@ -48,13 +52,9 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			max: 50
 		},
-		from: {
+		gamingId: {
 			type: String,
-			max: 50
-		},
-		relationship: {
-			type: Number,
-			enum: [1, 2, 3]
+			max: 25
 		}
 	},
 	{ timestamps: true }
